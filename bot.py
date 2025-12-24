@@ -41,7 +41,7 @@ def list_user_docs(user_id):
     return text
 
 
-# === Обработчики ===
+#  Обработчики 
 @bot.message_handler(commands=["start"])
 def start(message):
     bot.send_message(
@@ -80,7 +80,7 @@ def handle_document(message):
                 return
 
 
-        # === Обработка документа ===
+        #  Обработка документа 
         docs_obj = read_pdf(temp_file_path)
 
         if not docs_obj or all(not page.page_content.strip() for page in docs_obj):
@@ -92,7 +92,6 @@ def handle_document(message):
             return
 
         all_text_chunks = simple_approach(docs_obj)
-        print(len(tokenizer.encode(all_text_chunks[0]["page_content"])))
         all_embeddings = create_embeddings(embedding_model, all_text_chunks)
         add_doc_to_db(all_text_chunks, all_embeddings, collection)
 
@@ -100,7 +99,7 @@ def handle_document(message):
         if "all_text_chunks" not in user_entry:
             user_entry["all_text_chunks"] = []
 
-        # Добавляем новые чанки, не стирая старые
+        # Добавляем новые чанки
         user_entry["all_text_chunks"].extend(all_text_chunks)
         user_entry["processed"] = True
 
@@ -164,27 +163,20 @@ def handle_question(message):
     data = user_data[user_id]
 
     try:
-        print("Выполняем семантический поиск...")
         top_embeddings_semantic_search = semantic_search(embedding_model, collection, query)
                                         
-        print("Выполняем реранкинг...")
         top_chunks_rerank = rerank(reranker_model, query, top_embeddings_semantic_search, top_n=3)
         print(top_chunks_rerank)
         
-        print("Формируем контекст...")
         context, page_numbers = prepare_context(top_chunks_rerank)
         print(context)
 
-        # Получаем имя документа (если загружено)
+        # Получаем имя документа 
         file_name = None
         if user_data[user_id]["documents"]:
             file_name = user_data[user_id]["documents"][-1]["name"]  # последний загруженный документ
 
-        print("Выполняем генерацию...")
         answer = generate_qwen(model, tokenizer, query, context, page_numbers, file_name)
-
-        print('Закончили генерацию...')
-
         bot.send_message(user_id, answer)
 
     except Exception as e:
