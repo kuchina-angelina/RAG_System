@@ -4,7 +4,7 @@ import chromadb
 import uuid
 
 
-# Загрузка модели один раз при импорте
+# Загрузка модели 
 embedding_model = SentenceTransformer("cointegrated/rubert-tiny2")
 
 def create_embeddings(embedding_model, all_text_chunks):
@@ -28,7 +28,7 @@ client = chromadb.Client()
 collection = client.create_collection(name="my_collection")
 
 def add_doc_to_db(all_text_chunks, all_embeddings, collection, filename=None):
-    """Добавляет новые чанки в существующую коллекцию без перезаписи старых"""
+    """Добавляет новые чанки в существующую коллекцию"""
 
     # Генерация уникальных идентификаторов
     ids = [f"{uuid.uuid4()}" for _ in all_text_chunks]
