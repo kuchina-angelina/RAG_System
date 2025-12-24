@@ -15,7 +15,7 @@ def chunk_documents_semantic(docs, tokenizer, max_tokens=400, overlap=100):
     import re
 
     def split_large_point(point_text, point_number):
-        """Делит большой пункт на чанки по токенам, быстро."""
+        """Делит большой пункт на чанки по токена"""
 
         # Токенизируем пункт 
         tokens = tokenizer.encode(point_text)
@@ -26,7 +26,7 @@ def chunk_documents_semantic(docs, tokenizer, max_tokens=400, overlap=100):
         boundaries = []
         acc = 0
         for t in tokens:
-            piece = tokenizer.decode([t])   # decode одного токена
+            piece = tokenizer.decode([t])   
             start = acc
             end = acc + len(piece)
             boundaries.append((start, end))
@@ -57,7 +57,7 @@ def chunk_documents_semantic(docs, tokenizer, max_tokens=400, overlap=100):
         return chunks
 
     def split_large_text(txt):
-        """Если нет пунктов — режем весь текст."""
+        """Если нет пунктов, то делим весь текст."""
         tokens = tokenizer.encode(txt)
         n = len(tokens)
         full_decoded = tokenizer.decode(tokens)
@@ -102,7 +102,6 @@ def chunk_documents_semantic(docs, tokenizer, max_tokens=400, overlap=100):
             if word_count <= 200:
                 chunks.append(section_text)
             else:
-                # большой пункт → режем по токенам
                 chunks.extend(split_large_point(section_text, point_number))
         return chunks
 
