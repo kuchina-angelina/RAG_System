@@ -1,5 +1,5 @@
 def prepare_context(top_chunks_rerank):
-    """ Функция дл формирования контекста перд передачей в модель """
+    """ Функция для формирования контекста перед передачей в модель """
 
     context_parts = []
     page_numbers = set()
@@ -12,7 +12,7 @@ def prepare_context(top_chunks_rerank):
 
         page_num = meta.get("page_number", "неизвестно")
 
-        # Безопасный и понятный формат
+       
         block = (
             f"[Источник — страница {page_num}]\n"
             f"{text.strip()}"
@@ -21,7 +21,6 @@ def prepare_context(top_chunks_rerank):
         context_parts.append(block)
         page_numbers.add(page_num)
 
-    # ВАЖНО: объединяем безопасно, без опасных символов (---)
     final_context = "\n\n".join(context_parts)
 
     return final_context, sorted(list(page_numbers))
